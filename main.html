@@ -1,16 +1,123 @@
 <!DOCTYPE html>
-
-<html>
+<html lang="en">
 
 <head>
-	<link rel="stylesheet" href="styles.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tic Tac Toe</title>
+    <style>
+        .container {
+            text-align: center;
+        }
+
+        .board {
+            display: grid;
+            grid-template-columns: repeat(3, 100px);
+            grid-gap: 5px;
+            margin-top: 20px;
+        }
+
+        .cell {
+            width: 100px;
+            height: 100px;
+            border: 1px solid black;
+            font-size: 3em;
+            cursor: pointer;
+        }
+
+        .message {
+            margin-top: 20px;
+            font-size: 1.5em;
+        }
+    </style>
 </head>
 
 <body>
-	<!-- the entire body must be written by student -->
-    <script type="text/javascript" src="./script.js">
-</script>
+    <div class="container">
+        <h1>Tic Tac Toe</h1>
+        <div class="input-section">
+            <input type="text" id="player-1" placeholder="Player 1 Name">
+            <input type="text" id="player-2" placeholder="Player 2 Name">
+            <button id="submit">Submit</button>
+        </div>
+        <div class="message"></div>
+        <div class="board">
+            <div class="cell" id="1"></div>
+            <div class="cell" id="2"></div>
+            <div class="cell" id="3"></div>
+            <div class="cell" id="4"></div>
+            <div class="cell" id="5"></div>
+            <div class="cell" id="6"></div>
+            <div class="cell" id="7"></div>
+            <div class="cell" id="8"></div>
+            <div class="cell" id="9"></div>
+        </div>
+    </div>
 
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const player1Input = document.getElementById('player-1');
+            const player2Input = document.getElementById('player-2');
+            const submitButton = document.getElementById('submit');
+            const messageDiv = document.querySelector('.message');
+            const board = document.querySelector('.board');
+            const cells = document.querySelectorAll('.cell');
+
+            let currentPlayer = 1;
+            let player1Name = '';
+            let player2Name = '';
+
+            submitButton.addEventListener('click', function() {
+                player1Name = player1Input.value.trim();
+                player2Name = player2Input.value.trim();
+
+                if (player1Name !== '' && player2Name !== '') {
+                    board.style.display = 'grid';
+                    document.querySelector('.input-section').style.display = 'none';
+                    messageDiv.textContent = `${player1Name}, you're up`;
+                } else {
+                    alert('Please enter names for both players');
+                }
+            });
+
+            cells.forEach(cell => {
+                cell.addEventListener('click', function() {
+                    if (!cell.textContent) {
+                        cell.textContent = currentPlayer === 1 ? 'X' : 'O';
+                        currentPlayer = currentPlayer === 1 ? 2 : 1;
+                        const winner = checkWinner();
+                        if (winner) {
+                            messageDiv.textContent = `${winner} congratulations you won!`;
+                            cells.forEach(cell => cell.removeEventListener('click', handleClick));
+                        } else {
+                            messageDiv.textContent = currentPlayer === 1 ? `${player1Name}, you're up` : `${player2Name}, you're up`;
+                        }
+                    }
+                });
+            });
+
+            function checkWinner() {
+                const winningConditions = [
+                    [0, 1, 2], [3, 4, 5], [6, 7, 8], // rows
+                    [0, 3, 6], [1, 4, 7], [2, 5, 8], // columns
+                    [0, 4, 8], [2, 4, 6] // diagonals
+                ];
+
+                for (const condition of winningConditions) {
+                    const [a, b, c] = condition;
+                    if (cells[a].textContent && cells[a].textContent === cells[b].textContent && cells[a].textContent === cells[c].textContent) {
+                        return cells[a].textContent;
+                    }
+                }
+
+                if ([...cells].every(cell => cell.textContent !== '')) {
+                    return "It's a draw!";
+                }
+
+                return null;
+            }
+        });
+    </script>
 </body>
 
 </html>
